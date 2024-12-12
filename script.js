@@ -1,3 +1,4 @@
+"use-strict";
 // confg
 const TOTALANSWERSNUMBER = 4;
 const TIMEFORNEXTQUESTION = 7;
@@ -15,6 +16,7 @@ let timeInterval;
 let countQuestions = 0;
 const answersNumber = TOTALANSWERSNUMBER;
 let rightAnswers = 0;
+
 async function ajax() {
   try {
     const response = await fetch("apiQuestions.json");
@@ -127,16 +129,16 @@ function showResults(totalQuestion) {
 function countDown(duration, totalQuestion) {
   clearInterval(timeInterval);
   if (countQuestions === totalQuestion) return;
-  timeInterval = setInterval(() => {
-    let minutes = parseInt(duration / 60);
-    let second = parseInt(duration % 60);
-    minutes = minutes < 10 ? `0${minutes}` : minutes;
-    second = second < 10 ? `0${second}` : `0${second}`;
+  function tick() {
+    let minutes = `${Math.trunc(duration / 60)}`.padStart(2, "0");
+    let second = `${Math.trunc(duration % 60)}`.padStart(2, "0");
     countDownElement.innerHTML = `${minutes}:${second}`;
-    --duration;
     if (duration < 0) {
       clearInterval(timeInterval);
       submit.click();
     }
-  }, 1000);
+    --duration;
+  }
+  tick();
+  timeInterval = setInterval(tick, 1000);
 }
